@@ -17,7 +17,7 @@ from . import constants
 from .compat import FileNotFoundError
 
 
-VERSION = '0.5.4'
+VERSION = '0.6'
 # pycairo compat:
 version = '1.10.0'
 version_info = (1, 10, 0)
@@ -36,8 +36,9 @@ def dlopen(ffi, *names):
 
 ffi = FFI()
 ffi.cdef(constants._CAIRO_HEADERS)
-cairo = dlopen(ffi, 'libcairo.so.2', 'libcairo.2.dylib', 'libcairo-2.dll',
-               'cairo', 'libcairo-2')
+CAIRO_NAMES = ['libcairo.so.2', 'libcairo.2.dylib', 'libcairo-2.dll',
+               'cairo', 'libcairo-2']
+cairo = dlopen(ffi, *CAIRO_NAMES)
 
 
 class CairoError(Exception):
@@ -100,6 +101,10 @@ def install_as_pycairo():
 
 from .surfaces import (Surface, ImageSurface, PDFSurface, PSSurface,
                        SVGSurface, RecordingSurface, Win32PrintingSurface)
+try:
+    from .xcb import XCBSurface
+except ImportError:
+    pass
 from .patterns import (Pattern, SolidPattern, SurfacePattern,
                        Gradient, LinearGradient, RadialGradient)
 from .fonts import FontFace, ToyFontFace, ScaledFont, FontOptions
